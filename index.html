@@ -49,6 +49,10 @@ input[type=email]{width:100%;padding:12px;border:2px solid var(--g2);border-radi
 .tag{display:inline-block;background:var(--r);color:#fff;border-radius:5px;padding:0 10px;font-size:14px;font-weight:700}
 .cta{background:var(--bd);color:#fff;border-radius:12px;padding:24px;margin:24px 0}
 .cta h3{margin:0 0 6px}.cta .btn{background:#fff;color:var(--bd);margin-top:8px}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 3px;line-height:1.3}.fr i{font-style:normal;padding:0 3px}.fr i:first-child{border-bottom:1.5px solid currentColor}
+.mx{display:inline-block;vertical-align:middle;border-left:2px solid;border-right:2px solid;border-radius:5px;padding:2px 6px;margin:0 4px}.mx table{border-collapse:collapse}.mx td{padding:2px 9px;text-align:center}
+.rt{border-top:1.5px solid;padding:0 3px}.in{display:inline-flex;align-items:stretch;vertical-align:middle;margin:0 4px}.in b{font-size:2em;font-weight:300;line-height:1}.lm{display:inline-flex;flex-direction:column;justify-content:space-between;font-size:.8em;line-height:1.1;margin-inline-start:.2em;padding:.25em 0}.lm i{font-style:normal}
+.nav{flex-wrap:wrap}
 .hide{display:none!important}
 @media(max-width:520px){.bar{grid-template-columns:1fr 44px}.bar span.t{grid-column:1/-1;order:3}}
 @media print{header,.noprint,#home,#quiz,#gate{display:none!important}.card{border:0;padding:0}body{font-size:14px}.cta{background:#fff;color:#000;border:1px solid #000}.cta .btn{display:none}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
@@ -112,7 +116,8 @@ input[type=email]{width:100%;padding:12px;border:2px solid var(--g2);border-radi
 </div>
 <p class="note">هذه النتيجة تقييم ذاتي تشخيصي من 25 سؤالًا، وقد تتأثر بالتخمين أو بالسرعة، وليست امتحانًا معياريًا رسميًا.</p>
 </div>
-<div class="nav noprint"><button class="btn" id="print">طباعة / حفظ PDF</button><button class="btn s" id="again">إعادة الاختبار</button></div>
+<div class="nav noprint"><button class="btn" id="print">طباعة / حفظ PDF</button><button class="btn s" id="rvb">راجع إجاباتك والحلول</button><button class="btn s" id="again">إعادة الاختبار</button></div>
+<div id="rv" class="hide noprint"><div class="nav" style="align-items:center;margin-top:24px"><h2 style="margin:0">مراجعة الإجابات</h2><button class="btn s" id="rvf"></button></div><div id="rvl"></div></div>
 </section>
 </main>
 
@@ -147,21 +152,49 @@ const Q=[
 ["مثلث قائم ضلعاه القائمان {6} و{8}. كم طول الوتر؟",["9","10","12","14"],1],
 ["ما القيمة الدقيقة لـ {sin(30°)}؟",["0","1/2","√3/2","1"],1],
 ["ما حلّا المعادلة {x²−5x+6=0}؟",["1 و6","−2 و−3","2 و3","−2 و3"],2],
-["ما نهاية {(x²−4)/(x−2)} عندما {x} يقترب من {2}؟",["0","2","4","غير موجودة"],2],
+["ما نهاية {F:x²−4|x−2} عندما {x} يقترب من {2}؟",["0","2","4","غير موجودة"],2],
 ["إذا كانت {f(x)=x³}، فما قيمة {f′(2)}؟",["6","8","12","16"],2],
-["ما قيمة التكامل المحدد {∫₀² 2x dx}؟",["2","4","6","8"],1],
-["ما مجال الدالة {f(x)=√(x−3)} ضمن الأعداد الحقيقية؟",["x>3","x≥3","x≤3","كل الأعداد الحقيقية"],1],
+["ما قيمة التكامل المحدد {I:0,2|2x dx}؟",["2","4","6","8"],1],
+["ما مجال الدالة {R:f(x)=|x−3} ضمن الأعداد الحقيقية؟",["x>3","x≥3","x≤3","كل الأعداد الحقيقية"],1],
 ["ما قيمة {log₂(8)}؟",["2","3","4","8"],1],
-["ما محدد المصفوفة {[[1,2],[3,4]]}؟",["−2","2","5","10"],0],
+["ما محدد المصفوفة {M:1,2;3,4}؟",["−2","2","5","10"],0],
 ["ما الضرب القياسي للمتجهين {(1,2)} و{(3,4)}؟",["7","10","11","14"],2],
 ["عند رمي قطعة نقد عادلة مرتين، ما احتمال ظهور الصورة في المرتين؟",["1/2","1/3","1/4","3/4"],2],
 ["ما مجموع المتسلسلة الهندسية اللانهائية {1 + 1/2 + 1/4 + 1/8 + …}؟",["1","2","4","لا تتقارب"],1],
 ["إذا كان {P(A∩B)=0.2} و{P(B)=0.5}، فما {P(A|B)}؟",["0.1","0.25","0.4","0.7"],2]
 ];
+const E=[
+"نوحّد المقامين: {3/4 = 9/12} و{1/6 = 2/12}، فالمجموع {11/12}.",
+"{15% × 240 = 0.15 × 240 = 36}.",
+"المجموع 7 أجزاء، فالجزء الواحد {42 ÷ 7 = 6}، والأصغر {2 × 6 = 12}.",
+"{(−3)² = 9} (مربع السالب موجب) و{2³ = 8}، فالناتج {9 − 8 = 1}.",
+"نضرب البسط والمقام في 10: {24 ÷ 6 = 4}.",
+"{3x = 11 + 7 = 18} فتكون {x = 6}.",
+"نفك القوس: {2x − 6 = x + 5}، ثم ننقل الحدود فيكون {x = 11}.",
+"فرق مربعين: {a² − b² = (a − b)(a + b)}، لذا {x² − 9 = (x − 3)(x + 3)}.",
+"بجمع المعادلتين: {2x = 8} فيكون {x = 4}.",
+"عند الضرب نجمع الأسس {x³ × x² = x⁵}، وعند القسمة نطرح: {x⁵ ÷ x = x⁴}.",
+"نعوّض: {f(4) = 2×4 − 1 = 7}.",
+"الميل = فرق y ÷ فرق x = {4/2 = 2}.",
+"بفيثاغورس: {6² + 8² = 36 + 64 = 100}، والوتر {√100 = 10}.",
+"قيمة مثلثية معروفة: {sin(30°) = 1/2}.",
+"نحلّل: {(x − 2)(x − 3) = 0} فيكون {x = 2} أو {x = 3}.",
+"نحلّل البسط {(x−2)(x+2)} ونختصر مع المقام فيبقى {x + 2}، وعند {x = 2} الناتج {4}.",
+"{f′(x) = 3x²} فيكون {f′(2) = 3 × 4 = 12}.",
+"الدالة الأصلية {x²}، فالتكامل {2² − 0² = 4}.",
+"المقدار تحت الجذر لا يكون سالبًا: {x − 3 ≥ 0} أي {x ≥ 3}، والقيمة {3} مقبولة.",
+"{2³ = 8} إذن {log₂(8) = 3}.",
+"المحدد {1×4 − 2×3 = 4 − 6 = −2}.",
+"{1×3 + 2×4 = 3 + 8 = 11}.",
+"الرميتان مستقلتان: {1/2 × 1/2 = 1/4}.",
+"متسلسلة هندسية أساسها {1/2}، ومجموعها = الحد الأول ÷ (1 − الأساس) = {1 ÷ 1/2 = 2}.",
+"{P(A|B) = P(A∩B) ÷ P(B) = 0.2 ÷ 0.5 = 0.4}."];
 const L=["أ","ب","ج","د"],$=id=>document.getElementById(id);
 const esc=s=>s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
-const fmt=s=>esc(s).replace(/\{([^}]*)\}/g,"<bdi>$1</bdi>");
-const opt=s=>/[\u0600-\u06FF]/.test(s)?esc(s):"<bdi>"+esc(s)+"</bdi>";
+const fr=s=>s.replace(/(√?\d+)\/(\d+)/g,'<span class="fr"><i>$1</i><i>$2</i></span>');
+const tok=(t,a)=>{const p=a.split("|");if(t=="M")return '<span class="mx"><table>'+a.split(";").map(r=>"<tr>"+r.split(",").map(c=>"<td>"+c+"</td>").join("")+"</tr>").join("")+"</table></span>";if(t=="F")return '<span class="fr"><i>'+p[0]+'</i><i>'+p[1]+'</i></span>';if(t=="R")return p[0]+'√<span class="rt">'+p[1]+'</span>';const b=p[0].split(",");return '<span class="in"><b>∫</b><span class="lm"><i>'+b[1]+'</i><i>'+b[0]+'</i></span></span> '+p[1]};
+const fmt=s=>esc(s).replace(/\{([MFRI]):([^}]*)\}/g,(m,t,a)=>"<bdi>"+tok(t,a)+"</bdi>").replace(/\{([^}]*)\}/g,(m,a)=>"<bdi>"+fr(a)+"</bdi>");
+const opt=s=>/[\u0600-\u06FF]/.test(s)?esc(s):"<bdi>"+fr(esc(s))+"</bdi>";
 let i=0,A=[];
 function show(id){["home","quiz","gate","result"].forEach(x=>$(x).classList.toggle("hide",x!==id));window.scrollTo(0,0);if(id!=="result")$(id).querySelector("h1,h2,#q")?.focus?.()}
 function render(){
@@ -200,7 +233,13 @@ function showResult(email){
  show("result");
 }
 $("print").onclick=()=>window.print();
-$("again").onclick=()=>{A=[];i=0;$("em").value="";$("mk").checked=false;show("home")};
+let all=false;
+function renderRv(){$("rvf").textContent=all?"عرض الخاطئة فقط":"عرض كل الأسئلة";
+$("rvl").innerHTML=Q.map((q,j)=>{const ok=A[j]===q[2];if(ok&&!all)return"";
+return `<div class="card"><b>سؤال ${j+1}</b> <span class="tag" style="background:${ok?"var(--ok)":"var(--r)"}">${ok?"صحيحة":"خاطئة"}</span><p>${fmt(q[0])}</p><p>إجابتك: ${L[A[j]]}) ${opt(q[1][A[j]])} ${ok?"✓":"✗"}</p>${ok?"":`<p>الإجابة الصحيحة: ${L[q[2]]}) ${opt(q[1][q[2]])} ✓</p>`}<div style="background:var(--bl);padding:10px 14px;border-radius:8px"><b>${ok?"الحل:":"لماذا إجابتك خاطئة، وما الصحيح؟"}</b><br>${fmt(E[j])}</div></div>`}).join("")||"<p>كل إجاباتك صحيحة. أحسنت!</p>"}
+$("rvb").onclick=()=>{const r=$("rv");r.classList.toggle("hide");if(!r.classList.contains("hide")){all=false;renderRv();r.scrollIntoView({behavior:"smooth"})}};
+$("rvf").onclick=()=>{all=!all;renderRv()};
+$("again").onclick=()=>{$("rv").classList.add("hide");A=[];i=0;$("em").value="";$("mk").checked=false;show("home")};
 </script>
 </body>
 </html>
